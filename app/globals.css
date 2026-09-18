@@ -1,0 +1,392 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ───────────────────────────────────────────────────────────────────
+   Kabad Saathi design tokens
+
+   Palette is taken from the world the app actually lives in: the pale
+   recycled-newsprint of a scrap bale (paper), the painted dark green of a
+   scrap-shop rate board (ink / leaf), the high-visibility yellow-green of a
+   municipal sanitation vest (signal), the oxide orange of baled metal (rust)
+   and the standard-issue blue of an Indian goods vehicle (route).
+
+   `signal` is the one loud colour and is rationed: primary action, assigned
+   partner, nothing else.
+   ─────────────────────────────────────────────────────────────────── */
+:root {
+  --paper: #f3f5ef;
+  --paper-raised: #ffffff;
+  --ink: #14211a;
+  --ink-soft: #4a5b52;
+  --ink-faint: #8a978f;
+  --leaf: #1f7a4d;
+  --leaf-dark: #14543a;
+  --leaf-wash: #e7f2ea;
+  --signal: #b9e04c;
+  --signal-ink: #223409;
+  --rust: #c2612e;
+  --rust-wash: #fbeee6;
+  --route: #2f6fed;
+  --route-wash: #e8effd;
+  --alert: #c0392b;
+  --line: #dfe5dc;
+  --line-strong: #c3cdc2;
+
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 24px;
+
+  --shadow-low: 0 1px 2px rgba(20, 33, 26, 0.06);
+  --shadow-mid: 0 10px 30px -12px rgba(20, 33, 26, 0.24);
+  --shadow-high: 0 28px 60px -24px rgba(20, 33, 26, 0.38);
+
+  /* Display face falls through to Noto Indic so Kannada and Devanagari
+     headlines keep the same optical weight instead of dropping to a default. */
+  --font-display: 'Bricolage Grotesque', 'Noto Sans Kannada', 'Noto Sans Devanagari',
+    system-ui, sans-serif;
+  --font-body: 'Manrope', 'Noto Sans Kannada', 'Noto Sans Devanagari', system-ui,
+    -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-feature-settings: 'ss01', 'cv01';
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Indic scripts sit lower and need more leading than Latin at the same size. */
+html[lang='kn'] body,
+html[lang='hi'] body {
+  line-height: 1.65;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+.display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.022em;
+  line-height: 1.06;
+}
+
+html[lang='kn'] h1,
+html[lang='kn'] h2,
+html[lang='hi'] h1,
+html[lang='hi'] h2 {
+  letter-spacing: 0;
+  line-height: 1.28;
+}
+
+/* Keyboard users get a visible ring everywhere, without a ring on mouse click. */
+:focus-visible {
+  outline: 3px solid var(--route);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: var(--signal);
+  color: var(--signal-ink);
+}
+
+/* ── surfaces ───────────────────────────────────────────────────── */
+.card {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-low);
+}
+
+/* Hierarchy is carried by radius and border weight, not by one uniform card. */
+.panel {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.inset {
+  background: var(--paper);
+  border-radius: var(--radius);
+}
+
+/* ── controls ───────────────────────────────────────────────────── */
+.field {
+  width: 100%;
+  padding: 0.8rem 0.9rem;
+  background: var(--paper-raised);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.14s ease, box-shadow 0.14s ease;
+}
+
+.field:hover {
+  border-color: var(--line-strong);
+}
+
+.field:focus {
+  outline: none;
+  border-color: var(--leaf);
+  box-shadow: 0 0 0 3px var(--leaf-wash);
+}
+
+.field::placeholder {
+  color: var(--ink-faint);
+}
+
+.label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  margin-bottom: 0.35rem;
+}
+
+/* The one loud element in the system: the action that costs money or time. */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.95rem 1.4rem;
+  background: var(--leaf);
+  color: #fff;
+  font-weight: 800;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.14s ease, transform 0.1s ease;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--leaf-dark);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-signal {
+  background: var(--signal);
+  color: var(--signal-ink);
+}
+
+.btn-signal:hover:not(:disabled) {
+  background: #a9d139;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.3rem;
+  background: transparent;
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.14s ease, border-color 0.14s ease;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--leaf-wash);
+  border-color: var(--leaf);
+}
+
+/* ── the rate board ─────────────────────────────────────────────────
+   Modelled on the hand-painted price boards that hang in every scrap shop:
+   dark enamel ground, chalky rules, prices in the right-hand column.
+   ─────────────────────────────────────────────────────────────────── */
+.rate-board {
+  background: linear-gradient(170deg, #17402c 0%, #0e2a1d 100%);
+  border: 6px solid #0a1d14;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-high), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: #eaf3ec;
+}
+
+.rate-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.62rem 0;
+  border-bottom: 1px dashed rgba(234, 243, 236, 0.18);
+}
+
+.rate-row:last-child {
+  border-bottom: none;
+}
+
+.rate-price {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--signal);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── vehicle plate ──────────────────────────────────────────────────
+   Indian commercial goods vehicles carry black-on-yellow plates; reproducing
+   that makes the assigned vehicle instantly readable to any Indian user.
+   ─────────────────────────────────────────────────────────────────── */
+.plate {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #f5c518;
+  color: #101010;
+  border: 2px solid #101010;
+  border-radius: 5px;
+  padding: 0.18rem 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ── status pills ───────────────────────────────────────────────── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pill-wait {
+  background: #fdf3dc;
+  color: #7a5a10;
+}
+
+.pill-go {
+  background: var(--route-wash);
+  color: #1b4bb0;
+}
+
+.pill-ok {
+  background: var(--leaf-wash);
+  color: var(--leaf-dark);
+}
+
+.pill-off {
+  background: #f3e6e4;
+  color: #8e2f22;
+}
+
+/* ── map ────────────────────────────────────────────────────────── */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  z-index: 0;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+}
+
+/* ── motion ─────────────────────────────────────────────────────────
+   One orchestrated moment only: the booking-confirmed sheet rising, and the
+   pulse on a partner who is en route. Nothing else animates on its own.
+   ─────────────────────────────────────────────────────────────────── */
+@keyframes sheet-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes veil-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes beacon {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(31, 122, 77, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(31, 122, 77, 0);
+  }
+}
+
+.sheet-rise {
+  animation: sheet-rise 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.veil-in {
+  animation: veil-in 0.2s ease both;
+}
+
+.beacon {
+  animation: beacon 2s ease-out infinite;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--leaf-wash) 25%, #f4faf6 50%, var(--leaf-wash) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: var(--radius);
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Thin scrollbars inside the assistant and sheets. */
+.scroll-slim::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scroll-slim::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 999px;
+}
