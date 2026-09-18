@@ -72,3 +72,4 @@ The landing page has **Request Pickup** and **Join as Kabadiwala** buttons. The 
 - `GET /api/collector/earnings` — computed by `collectorMonthlyStats()` in `lib/localdb.ts`.
 - Ratings: `POST /api/ratings` lets a customer rate a collector (1-5) after a `COMPLETED` pickup; average feeds the dashboard's Rating stat. (No rating UI is wired into the customer flow yet — add a "Rate this pickup" button on completed cards when ready.)
 # Kabad-Sathi
+# Kabad-Sathi
