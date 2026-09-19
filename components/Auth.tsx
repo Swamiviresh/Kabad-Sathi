@@ -148,7 +148,14 @@ export default function Auth({
           password: form.password,
         });
         if (error) throw error;
-        if (data.user) await ensureProfile(data.user.id, {});
+        if (data.user) {
+            const meta = data.user.user_metadata || {};
+            await ensureProfile(data.user.id, {
+            name: meta.name,
+            role: meta.role,
+            phone: meta.phone,
+            });
+}
       }
     } catch (err: any) {
       setError(err.message || 'Something went wrong.');
