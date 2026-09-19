@@ -149,13 +149,15 @@ export default function Auth({
         });
         if (error) throw error;
         if (data.user) {
-            const meta = data.user.user_metadata || {};
-            await ensureProfile(data.user.id, {
+          // Use the details saved at signup, so a missing profile row is
+          // recreated with the right role instead of defaulting to customer.
+          const meta = data.user.user_metadata || {};
+          await ensureProfile(data.user.id, {
             name: meta.name,
             role: meta.role,
             phone: meta.phone,
-            });
-}
+          });
+        }
       }
     } catch (err: any) {
       setError(err.message || 'Something went wrong.');
