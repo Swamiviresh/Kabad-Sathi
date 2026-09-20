@@ -69,12 +69,11 @@ It is designed to be **simple** (big buttons, one decision per screen), **multil
 | Database | Local JSON (`data/db.json`) or Supabase |
 | AI Assistant | LLM with tool-use via OpenRouter |
 | Voice | Browser Web Speech API |
-| SMS / OTP (optional) | Twilio |
 | Hosting | Vercel |
 
 ## Getting Started
 
-**Prerequisites:** Node.js 20+ and npm. Supabase, OpenRouter and Twilio are all optional.
+**Prerequisites:** Node.js 20+ and npm. Supabase and OpenRouter are both optional.
 
 ```bash
 git clone https://github.com/Swamiviresh/Kabad-Sathi.git
@@ -92,14 +91,12 @@ Open **http://localhost:3000**.
 | --- | --- | --- |
 | `OPENROUTER_API_KEY` / `OPENROUTER_MODEL` | Powers the AI Saathi assistant | Keyword-based fallback |
 | `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase connection | Local JSON database |
-| `TWILIO_ACCOUNT_SID` / `TWILIO_AUTH_TOKEN` / `TWILIO_FROM_NUMBER` | Real SMS OTPs | OTP shown on screen |
-| `OTP_HASH_SECRET` | Secret for hashing OTPs | **Change before deploying** |
 
 To use Supabase, run [`supabase.sql`](./supabase.sql) in the Supabase SQL Editor, then add the URL and anon key to `.env.local`.
 
 ## How to Use
 
-**Demo mode:** without Supabase or SMS keys, any details work for sign-in and data is stored in `data/db.json` (delete it to reset).
+**Local mode:** without Supabase keys, users and pickups are stored in `data/db.json` (delete it to reset).
 
 **As a household**
 1. Tap **Request Pickup** and sign in.
