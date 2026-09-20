@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+build/
+
+# Secrets — .env.local holds GOOGLE_API_KEY and must never be committed.
+.env
+.env.local
+.env*.local
+
+# Local JSON database (contains user accounts)
+data/db.json
+
+*.tsbuildinfo
+.DS_Store
+npm-debug.log*
