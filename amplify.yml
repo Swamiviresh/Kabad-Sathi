@@ -1,0 +1,27 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        # Install exact versions from package-lock.json (fast, reproducible)
+        - npm ci
+    build:
+      commands:
+        # Amplify's SSR server does NOT receive console env vars automatically.
+        # Copy the ones the app needs into .env.production before building.
+        # The pattern matches any variable NAME that starts with one of these prefixes.
+        - env | grep -E '^(NEXT_PUBLIC_|SUPABASE_|OPENROUTER_)' >> .env.production || true
+        # Safety check: prints only the variable NAMES (never the values) to the build log
+        - echo "Variables written to .env.production:" && cut -d= -f1 .env.production || true
+        # Build the Next.js app
+        - npm run build
+  artifacts:
+    # Next.js SSR output folder (NOT "out", which is for static exports)
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      # Speeds up later builds
+      - node_modules/**/*
+      - .next/cache/**/*
