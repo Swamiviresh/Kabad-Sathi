@@ -11,8 +11,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Generate a mock UPI QR code
-    const upiId = 'kabad-sathi@upi';
+    // Get UPI ID from environment variable
+    const upiId = process.env.UPI_ID || 'kabad-sathi@upi';
     const transactionId = `TXN-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
     // Create UPI deep link
