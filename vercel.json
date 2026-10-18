@@ -1,0 +1,6 @@
+{
+  "version": 2,
+  "buildCommand": "next build",
+  "framework": "nextjs",
+  "regions": ["bom1"]
+}
