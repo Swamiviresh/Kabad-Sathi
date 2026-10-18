@@ -75,6 +75,11 @@ export type DBRequest = {
   accepted_at?: string;
   completed_at?: string;
   created_at: string;
+  /** Payment information */
+  payment_method?: 'upi' | 'cod' | null;
+  payment_status?: 'pending' | 'completed' | 'failed' | null;
+  payment_transaction_id?: string | null;
+  payment_completed_at?: string | null;
 };
 
 /**

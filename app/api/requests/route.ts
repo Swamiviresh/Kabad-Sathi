@@ -103,6 +103,10 @@ export async function POST(req: NextRequest) {
     rejected_by: [],
     collector_confirmed_complete: false,
     customer_confirmed_complete: false,
+    payment_method: body.payment_method,
+    payment_transaction_id: body.payment_transaction_id,
+    payment_status: body.payment_status,
+    payment_completed_at: body.payment_completed_at,
   });
   return NextResponse.json({ request });
 }

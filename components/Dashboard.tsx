@@ -357,6 +357,8 @@ export default function Dashboard({
       ...pendingRequestData,
       payment_method: method,
       payment_transaction_id: transactionId || null,
+      payment_status: 'completed',
+      payment_completed_at: new Date().toISOString(),
     };
     try {
       if (supabase) {

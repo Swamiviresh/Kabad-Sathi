@@ -195,3 +195,10 @@ create policy "collectors update pickups" on pickup_requests
       where profiles.id = auth.uid() and profiles.role = 'collector'
     )
   );
+
+-- ── Payment tracking (UPI & Cash on Delivery) ─────────────────────────────
+alter table pickup_requests add column if not exists payment_method text check (payment_method in ('upi', 'cod'));
+alter table pickup_requests add column if not exists payment_status text check (payment_status in ('pending', 'completed', 'failed'));
+alter table pickup_requests add column if not exists payment_transaction_id text;
+alter table pickup_requests add column if not exists payment_completed_at timestamptz;
+
