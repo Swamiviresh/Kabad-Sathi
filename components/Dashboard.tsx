@@ -29,6 +29,7 @@ import RewardsTeaser from './RewardsTeaser';
 import { pickupPoints } from '../lib/rewards';
 import { useLanguage } from '../lib/LanguageContext';
 import { STATUS_KEYS } from '../lib/i18n';
+import PaymentModal, { PaymentDetails, PaymentMethod } from './payments/PaymentModal';
 
 const MapPicker = dynamic(() => import('./MapPicker'), {
   ssr: false,
@@ -55,6 +56,10 @@ type Req = {
   notes?: string;
   accepted_at?: string;
   completed_at?: string;
+  /** Payment related fields */
+  payment_method?: 'upi' | 'cod' | null;
+  payment_transaction_id?: string | null;
+  payment_status?: 'pending' | 'completed' | 'failed' | null;
   /** Other side's public contact info — only present on accepted orders. */
   counterparty?: {
     id: string;
@@ -93,6 +98,10 @@ export default function Dashboard({
   const [loaded, setLoaded] = useState(false);
   /** Bumped whenever a pickup completes, so the rewards panel re-fetches the balance. */
   const [rewardsKey, setRewardsKey] = useState(0);
+  /** Payment modal state */
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [pendingRequestData, setPendingRequestData] = useState<any>(null);
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
 
   const notify = (x: string) => {
     setToast(x);
@@ -301,11 +310,14 @@ export default function Dashboard({
     }
   }
 
+  // Show payment modal before creating order
   async function create() {
     if (!validItems.length || !pos) {
       notify(t('toast_need_items'));
       return;
     }
+    // Store request data temporarily and show payment modal
+    const tempId = 'TEMP-' + Date.now();
     const row = {
       waste_type: summaryType(validItems),
       quantity: `${totalKg(validItems)} kg`,
@@ -322,9 +334,30 @@ export default function Dashboard({
       rejected_by: [],
       collector_confirmed_complete: false,
       customer_confirmed_complete: false,
+      payment_method: null as PaymentMethod | null,
+      payment_transaction_id: null as string | null,
     };
+    setPendingRequestData(row);
+    setPaymentDetails({
+      requestId: tempId,
+      amount: grandTotal,
+      customerName: user.name || 'Customer',
+      customerPhone: user.phone,
+      customerEmail: user.email,
+    });
+    setPaymentModalOpen(true);
+  }
 
+  // Actual request submission after payment selection
+  async function submitRequestAfterPayment(method: PaymentMethod, transactionId?: string) {
+    if (!pendingRequestData) return;
+    setPaymentModalOpen(false);
     setBooking(true);
+    const row = {
+      ...pendingRequestData,
+      payment_method: method,
+      payment_transaction_id: transactionId || null,
+    };
     try {
       if (supabase) {
         const { data, error } = await supabase
@@ -355,6 +388,7 @@ export default function Dashboard({
       return;
     } finally {
       setBooking(false);
+      setPendingRequestData(null);
     }
 
     // Reset the form — the order is now broadcast to every collector's dashboard.
@@ -362,7 +396,18 @@ export default function Dashboard({
     const now = new Date();
     setForm({ date: formatDate(now), time: formatTime(now), notes: '', address: '' });
     setPos(null);
-    notify(t('toast_request_sent'));
+    const msg = method === 'upi' ? 'Payment received! Order confirmed.' : 'Order confirmed! Pay on pickup.';
+    notify(msg);
+  }
+
+  function handlePaymentComplete(method: PaymentMethod, transactionId?: string) {
+    submitRequestAfterPayment(method, transactionId);
+  }
+
+  function handlePaymentCancel() {
+    setPaymentModalOpen(false);
+    setPendingRequestData(null);
+    setPaymentDetails(null);
   }
 
   /**
@@ -483,6 +528,18 @@ export default function Dashboard({
         <span>{t('total')}</span>
         <span className="tabular-nums text-leaf">₹{r.total_amount ?? 0}</span>
       </div>
+      {r.payment_method && (
+        <div className="mt-2 flex items-center gap-1 text-xs">
+          <span className={`rounded px-2 py-0.5 font-medium ${
+            r.payment_method === 'upi' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'
+          }`}>
+            {r.payment_method === 'upi' ? 'UPI' : 'COD'}
+          </span>
+          {r.payment_transaction_id && (
+            <span className="text-ink-faint">· {r.payment_transaction_id.slice(0, 12)}...</span>
+          )}
+        </div>
+      )}
     </div>
   );  const statusBadge = (status: string) => {
     const cls =
@@ -1045,6 +1102,13 @@ export default function Dashboard({
         userId={user.id}
         role={role}
         onBookingDraft={role === 'customer' ? applyVoiceDraft : undefined}
+      />
+
+      <PaymentModal
+        isOpen={paymentModalOpen}
+        onClose={handlePaymentCancel}
+        onPaymentComplete={handlePaymentComplete}
+        details={paymentDetails}
       />
     </main>
   );
